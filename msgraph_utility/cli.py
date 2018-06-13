@@ -2,6 +2,7 @@ import os
 import click
 from . import auth
 from .cli_context import pass_context
+from .helpers import extract_path
 
 
 @click.group(context_settings=dict(help_option_names=['-h', '--help']))
@@ -24,50 +25,52 @@ def authenticate(ctx):
 
 @cli.command('put-content')
 @click.option('--destination', '-d', required=True, help='Destination file on OneDrive')
-@click.argument('file', required=True)
+@click.argument('file-path', required=True)
 @pass_context
-def put_content(ctx, file, destination):
+def put_content(ctx, file_path, destination):
     """ Put content of a file to OneDrive
     """
     tokens = auth.ensure_tokens(ctx.tokens)
     ctx.save(tokens=tokens)
 
     session = auth.get_request_session(tokens)
-
-    with open(file, 'r') as file:
+    with open(file_path, 'r') as file:
         data = file.read()
 
-    response = session.put(auth.api_endpoint(f'me/drive/root:{destination}:/content'),
+    _, file_name = extract_path(file_path)
+    destination_path, destination_name = extract_path(destination)
+    destination_name = destination_name if destination_name else file_name
+
+    response = session.put(auth.api_endpoint(f'me/drive/root:{destination_path}{destination_name}:/content'),
                            headers={'Content-Type': 'text/plain'},
                            data=data)
 
     if ctx.verbose:
-        print(response.text)
+        click.echo(response.text)
     else:
-        print(f'response {response.status_code}')
+        click.echo(f'response {response.status_code}')
 
 
 @cli.command('get-content')
-@click.argument('file', required=True)
+@click.argument('file-path', required=True)
 @pass_context
-def get_content(ctx, file):
+def get_content(ctx, file_path):
     """ Get content of a file from OneDrive
     """
     tokens = auth.ensure_tokens(ctx.tokens)
     ctx.save(tokens=tokens)
 
+    file_dir, file_name = extract_path(file_path)
     session = auth.get_request_session(tokens)
-    response = session.get(auth.api_endpoint(f'me/drive/root:{file}:/content'))
-
-    file_name = os.path.basename(file)
+    response = session.get(auth.api_endpoint(f'me/drive/root:{file_dir}{file_name}:/content'))
 
     with open(file_name, 'w') as file:
         file.write(response.text)
 
     if ctx.verbose:
-        print(response.text)
+        click.echo(response.text)
     else:
-        print(f'response {response.status_code}')
+        click.echo(f'response {response.status_code}')
 
 
 @cli.command('show')
