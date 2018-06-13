@@ -31,20 +31,20 @@ def get_request_session(tokens):
     return session
 
 
-def ensure_tokens(tokens):
+def ensure_tokens(client_id, tokens):
     expiresOn = parser.parse(tokens['expiresOn'])
 
     if expiresOn < datetime.now() - timedelta(minutes=10):
         ctx = AuthenticationContext(config.AUTHORITY_URL, api_version=None)
 
         return ctx.acquire_token_with_refresh_token(tokens['refreshToken'],
-                                                    config.CLIENT_ID,
+                                                    client_id,
                                                     config.RESOURCE)
 
     return tokens
 
 
-def acquire_token_with_device_code(auto=False):
+def acquire_token_with_device_code(client_id, auto=False):
     """Obtain an access token from Azure AD (via device flow) and create
     a Requests session instance ready to make authenticated calls to
     Microsoft Graph.
@@ -56,7 +56,7 @@ def acquire_token_with_device_code(auto=False):
     """
     ctx = AuthenticationContext(config.AUTHORITY_URL, api_version=None)
     device_code = ctx.acquire_user_code(config.RESOURCE,
-                                        config.CLIENT_ID)
+                                        client_id)
 
     # display user instructions
     if auto:
@@ -70,4 +70,4 @@ def acquire_token_with_device_code(auto=False):
 
     return ctx.acquire_token_with_device_code(config.RESOURCE,
                                               device_code,
-                                              config.CLIENT_ID)
+                                              client_id)

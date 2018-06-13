@@ -16,11 +16,12 @@ def cli(ctx, verbose):
 
 @cli.command()
 @pass_context
-def authenticate(ctx):
+@click.option('--client-id', required=True, help='Client ID for native application')
+def authenticate(ctx, client_id):
     """ Invoke authentication workflow
     """
-    tokens = auth.acquire_token_with_device_code(auto=False)
-    ctx.save(tokens=tokens)
+    tokens = auth.acquire_token_with_device_code(client_id, auto=False)
+    ctx.save(tokens=tokens, client_id=client_id)
 
 
 @cli.command('put-content')
@@ -30,7 +31,7 @@ def authenticate(ctx):
 def put_content(ctx, file_path, destination):
     """ Put content of a file to OneDrive
     """
-    tokens = auth.ensure_tokens(ctx.tokens)
+    tokens = auth.ensure_tokens(ctx.client_id, ctx.tokens)
     ctx.save(tokens=tokens)
 
     session = auth.get_request_session(tokens)
@@ -57,7 +58,7 @@ def put_content(ctx, file_path, destination):
 def get_content(ctx, file_path):
     """ Get content of a file from OneDrive
     """
-    tokens = auth.ensure_tokens(ctx.tokens)
+    tokens = auth.ensure_tokens(ctx.client_id, ctx.tokens)
     ctx.save(tokens=tokens)
 
     file_dir, file_name = extract_path(file_path)
