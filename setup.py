@@ -34,7 +34,7 @@ setup(
     packages=find_packages(),
     install_requires=requires,
     entry_points={'console_scripts': [
-        'msgraph_utility = msgraph_utility.cli:main']},
+        'li-msgraph-utility = msgraph_utility.cli:main']},
     classifiers=[
         'License :: OSI Approved :: MIT License',
         'Programming Language :: Python',

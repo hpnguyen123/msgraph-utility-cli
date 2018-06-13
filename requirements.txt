@@ -1,0 +1,4 @@
+adal==1.0.1
+pyperclip==1.6.2
+requests==2.19.0
+click==6.7
