@@ -15,7 +15,7 @@ Requirements
 Application Setup
 -------
 This console application is built upon [python-sample-console-app](https://github.com/microsoftgraph/python-sample-console-app).
-Register a new native as instructed by this sample application.
+Register a new native as instructed by this sample application. Save your application client-id for authentication step below.
 
 
 Build
@@ -29,7 +29,7 @@ Build
 
 Run
 -------
-li-msgraph-utility authenticate --client-id [YOUR_CLIENT_ID]
+li-msgraph-utility authenticate --client-id [APPCLIENTID]
 
 Commands
 -------
