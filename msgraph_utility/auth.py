@@ -34,7 +34,7 @@ def get_request_session(tokens):
 def ensure_tokens(client_id, tokens):
     expiresOn = parser.parse(tokens['expiresOn'])
 
-    if expiresOn < datetime.now() - timedelta(minutes=10):
+    if expiresOn < datetime.now() + timedelta(minutes=10):
         ctx = AuthenticationContext(config.AUTHORITY_URL, api_version=None)
 
         return ctx.acquire_token_with_refresh_token(tokens['refreshToken'],

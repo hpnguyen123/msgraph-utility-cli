@@ -11,6 +11,7 @@ class Context(object):
         self.verbose = False
         self.tokens = None
         self.client_id = None
+        self.history = []
         self.home = os.getcwd()
         self.config = os.path.expanduser('~/.li_msgraph')
 
