@@ -1,6 +1,7 @@
 import os
 import click
 import pickle
+from . import auth
 
 
 class Context(object):
@@ -35,6 +36,13 @@ class Context(object):
 
         if dirty:
             self._serialize()
+
+    def get_request_session(self):
+        """ Gets the current session.  If token expired, refresh token
+        """
+        tokens = auth.ensure_tokens(self.client_id, self.tokens)
+        self.save(tokens=tokens)
+        return auth.get_request_session(tokens)
 
 
 pass_context = click.make_pass_decorator(Context, ensure=True)
