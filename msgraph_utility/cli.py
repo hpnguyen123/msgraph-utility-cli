@@ -3,7 +3,7 @@ import click
 import json
 from . import auth
 from .cli_context import pass_context
-from .helpers import extract_path
+from .helpers import extract_path, get_stdin
 from msgraph_utility import api as api_util
 
 
@@ -80,14 +80,8 @@ def get_content(ctx, drive_id, item_id):
     if drive_id and item_id:
         api_util.get_content(session, drive_id, item_id, verbose=ctx.verbose)
 
-    raw = click.get_text_stream('stdin').read()
-    if raw:
-        data = json.loads(raw)
-        if not isinstance(data, (list, tuple)):
-            data = [data]
-
-        for item in data:
-            api_util.get_content(session, item['drive-id'], item['item-id'], file_name=item.get('file-name'), verbose=ctx.verbose)
+    for item in get_stdin():
+        api_util.get_content(session, item['drive-id'], item['item-id'], file_name=item.get('file-name'), verbose=ctx.verbose)
 
 
 @cli.command('get')
@@ -116,9 +110,9 @@ def show(ctx, property):
 def test(ctx):
     """ Test
     """
-    stdin = click.get_text_stream('stdin')
-    for line in stdin.input():
-        click.echo(f'{line} \n --------- \n')
+    stdin = click.get_text_stream('stdin').read()
+    with click.progressbar(length=1, label='Unzipping archive') as count:
+        click.echo(f'{count} {stdin}')
 
 
 def main():

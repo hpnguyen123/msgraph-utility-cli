@@ -1,6 +1,8 @@
 """ General utility methods
 """
 import os
+import click
+import json
 
 
 def extract_path(path):
@@ -15,8 +17,27 @@ def extract_path(path):
 
 
 def prepend_slash(path):
+    """ Add a slash in front
+    """
     return path if path.startswith('/') else f'/{path}'
 
 
 def append_slash(path):
+    """ Add a slash at the end
+    """
     return path if path.endswith('/') else f'{path}/'
+
+
+def get_stdin():
+    """ Get std input as a list
+    """
+    results = []
+    raw = click.get_text_stream('stdin').read()
+    if raw:
+        data = json.loads(raw)
+        if isinstance(data, (list, tuple)):
+            results.extend(data)
+        else:
+            results.append(data)
+
+    return results
