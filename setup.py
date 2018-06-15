@@ -3,7 +3,7 @@ import sys
 from setuptools import setup, find_packages
 from setuptools.command.test import test as TestCommand
 
-requires = ['click']
+requires = ['click', 'adal', 'pyperclip', 'requests']
 tests_requires = ['pytest', 'pytest-cache', 'pytest-cov']
 lint_requires = ['flake8', 'black']
 dev_requires = requires + tests_requires + lint_requires
