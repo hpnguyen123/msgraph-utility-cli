@@ -18,7 +18,7 @@ def cli(ctx, verbose):
 
 @cli.command()
 @pass_context
-@click.option('--client-id', required=True, help='Client ID for native application')
+@click.argument('client-id')
 def init(ctx, client_id):
     """ Invoke authentication workflow
     """
